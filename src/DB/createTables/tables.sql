@@ -73,6 +73,13 @@ CREATE TABLE grades
     PRIMARY KEY (grade)
 );
 
+CREATE TABLE graduating_requirements
+(
+    credit_type  VARCHAR(2) NOT NULL,
+    num_required INTEGER    NOT NULL,
+    PRIMARY KEY (credit_type)
+);
+
 CREATE TABLE enrollments
 (
     course_id   VARCHAR(5),
@@ -80,8 +87,9 @@ CREATE TABLE enrollments
     status      VARCHAR(10),
     semester    VARCHAR(10),
     grade       VARCHAR(2) REFERENCES grades (grade),
-    credited_as VARCHAR(2),
-    PRIMARY KEY (course_id, student_id, semester)
+    credited_as VARCHAR(2) REFERENCES graduating_requirements (credit_type),
+    PRIMARY KEY (course_id, student_id, semester),
+    FOREIGN KEY (course_id, semester) REFERENCES offerings (course_id, semester)
 );
 
 

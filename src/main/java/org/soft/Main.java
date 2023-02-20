@@ -13,9 +13,9 @@ public class Main {
 
 //        ad.addCourse("Machine Learning", "CS503", "CSE", 4);
 //        ad.removeCourse("CS503");
-//        System.out.println(ad.generateTranscript("rishabhjain", "2023-W"));
+        System.out.println(ad.generateTranscript("rishabhjain", "2023-W"));
 //        System.out.println(ad.getGrade("rishabhjain", "CS503", "2023-W"));
-//
+//        System.out.println(ad.canGraduate("rishabhjain"));
 //
 //        fs.addOffering("CS503", "2022-S", new String[]{"CSE", "MNC", "EE"}, new boolean[]{true, true, false});
 //        fs.removeOffering("CS503", "2023-W");
@@ -31,7 +31,11 @@ public class Main {
 //        String[] temp = as.login("Rishabh Jain", "strongpassword");
 //        for (String c : temp)
 //            System.out.println(c);
-
+//        Scanner sc = new Scanner(System.in);
+//        while (true) {
+//            String ip;
+//            ip = sc.next();
+//        }
 
         DatabaseService.cpds.close();
     }
