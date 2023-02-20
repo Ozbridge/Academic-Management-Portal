@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Services {
+public class AcademicServices {
     int getEnrollmentList() {
         return 0;
     }
