@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 public class AuthService {
     String[] login(String username, String password) {
         try {
-            String query = "SELECT userid, role, dept FROM users WHERE username = ? and password = ?";
+            String query = "SELECT userid, role, dept FROM users WHERE userid = ? and password = ?";
             Connection con = DatabaseService.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, username);

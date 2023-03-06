@@ -4,39 +4,45 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-//        System.out.println(new Date());
-        AdminServices ad = new AdminServices();
-        FacultyServices fs = new FacultyServices("FCS001");
-        StudentServices ss = new StudentServices("rishabhjain", "CSE");
+
         AuthService as = new AuthService();
-
-
-//        ad.addCourse("Machine Learning", "CS503", "CSE", 4);
-//        ad.removeCourse("CS503");
-        System.out.println(ad.generateTranscript("rishabhjain", "2023-W"));
-//        System.out.println(ad.getGrade("rishabhjain", "CS503", "2023-W"));
-//        System.out.println(ad.canGraduate("rishabhjain"));
-//
-//        fs.addOffering("CS503", "2022-S", new String[]{"CSE", "MNC", "EE"}, new boolean[]{true, true, false});
-//        fs.removeOffering("CS503", "2023-W");
-//        fs.uploadGrades("CS503", "2023-W", new File("/Users/rishabhjain/IdeaProjects/softE/SoftE/datatemp/gradeCS503.csv"));
-//
-//
-//        ss.creditRequest("CS503", "2023-W", "");
-//        ss.dropRequest("CS201", "2022-S");
-//        System.out.println(ss.hasCompletedPrerequisites("CS503"));
-//        System.out.println(ss.calculateCGPA("2023-W"));
-//
-//
-//        String[] temp = as.login("Rishabh Jain", "strongpassword");
-//        for (String c : temp)
-//            System.out.println(c);
-//        Scanner sc = new Scanner(System.in);
-//        while (true) {
-//            String ip;
-//            ip = sc.next();
-//        }
-
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            String user, password;
+            System.out.println("Username:");
+            user = sc.next();
+            System.out.println("Password:");
+            password = sc.next();
+            String[] temp = as.login(user.trim(), password.trim());
+            if (temp.length == 0) {
+                System.out.println("Try again...");
+                continue;
+            }
+            Menu menu = null;
+            switch (temp[1]) {
+                case "STU":
+                    menu = new StudentMenu(temp[0], temp[2]);
+                    break;
+                case "FAC":
+                    menu = new FacultyMenu(temp[0], temp[2]);
+                    break;
+                case "ADM":
+                    menu = new AdminMenu();
+                    break;
+                default:
+                    System.out.println("Error occurred, try again...");
+            }
+            while (true) {
+                menu.showOptions();
+                menu.doStuff(sc.next());
+                System.out.println("Enter 'logout' to logout or anything else to continue...");
+                if (sc.next().equals("logout"))
+                    break;
+            }
+            System.out.println("Enter 'quit' to quit or anything else to continue...");
+            if (sc.next().equals("quit"))
+                break;
+        }
         DatabaseService.cpds.close();
     }
 

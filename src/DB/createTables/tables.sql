@@ -1,6 +1,6 @@
 CREATE TABLE DEPARTMENTS
 (
-    dept_name VARCAHR(5) NOT NULL,
+    dept_name VARCHAR(5) NOT NULL,
     PRIMARY KEY (dept_name)
 );
 
@@ -10,14 +10,16 @@ CREATE TABLE users
     username VARCHAR(30) NOT NULL,
     password VARCHAR(30) NOT NULL,
     role     VARCHAR(5)  NOT NULL,
-    dept     VARCHAR(5)  NOT NULL REFERENCES DEPARTMENTS (dept_name)
-        PRIMARY KEY (userid)
+    dept     VARCHAR(5)  NOT NULL REFERENCES DEPARTMENTS (dept_name),
+    phone    VARCHAR(15),
+    email    VARCHAR(30),
+    PRIMARY KEY (userid)
 );
 
 
 CREATE TABLE students
 (
-    student_id VARCHAR(20) NOT NULL REFERENCES users (userid),
+    student_id VARCHAR(20) NOT NULL REFERENCES users (userid) PRIMARY KEY
 
 );
 
@@ -27,6 +29,8 @@ CREATE TABLE courses
     id      VARCHAR(5)  NOT NULL,
     dept    VARCHAR(5)  NOT NULL,
     credits INTEGER     NOT NULL,
+    active  BOOLEAN     NOT NUll,
+    isBTP   BOOLEAN     NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -39,30 +43,33 @@ CREATE TABLE prerequisites
 
 CREATE TABLE semesters
 (
-    id       VARCHAR(10),
-    str      DATE,
-    ends     DATE,
-    add_drop DATE,
-    withdraw DATE,
-    limit    INTEGER NOT NULL,
+    id         VARCHAR(10),
+    str        DATE,
+    ends       DATE,
+    add_drop   DATE,
+    withdraw   DATE,
+    cred_limit INTEGER NOT NULL,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE offerings
 (
-    course_id VARCHAR(5)  NOT NULL REFERENCES courses (id),
-    status    VARCHAR(10) NOT NULL,
-    semester  VARCHAR(10) NOT NULL REFERENCES semesters (id),
-    for_dept  VARCHAR(5)  NOT NULL,
-    is_core   BOOLEAN     NOT NULL,
+    course_id VARCHAR(5)       NOT NULL,
+    status    VARCHAR(10)      NOT NULL,
+    semester  VARCHAR(10)      NOT NULL REFERENCES semesters (id),
+    for_dept  VARCHAR(5)       NOT NULL,
+    is_core   BOOLEAN          NOT NULL,
+    cgpa      DOUBLE PRECISION NOT NULL,
     PRIMARY KEY (course_id, semester, for_dept)
 );
+
+
 
 CREATE TABLE offering_instructors
 (
     course_id     VARCHAR(5) REFERENCES courses (id),
     semester      VARCHAR(10) REFERENCES semesters (id),
-    instructor_id VARCHAR(30) REFERENCES users (userid),
+    instructor_id VARCHAR(20) REFERENCES users (userid),
     is_coord      BOOLEAN NOT NULL
 );
 
@@ -83,13 +90,12 @@ CREATE TABLE graduating_requirements
 CREATE TABLE enrollments
 (
     course_id   VARCHAR(5),
-    student_id  VARCHAR(30),
+    student_id  VARCHAR(20) REFERENCES students (student_id),
     status      VARCHAR(10),
     semester    VARCHAR(10),
     grade       VARCHAR(2) REFERENCES grades (grade),
     credited_as VARCHAR(2) REFERENCES graduating_requirements (credit_type),
-    PRIMARY KEY (course_id, student_id, semester),
-    FOREIGN KEY (course_id, semester) REFERENCES offerings (course_id, semester)
+    PRIMARY KEY (course_id, student_id, semester)
 );
 
 

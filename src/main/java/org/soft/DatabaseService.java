@@ -3,6 +3,7 @@ package org.soft;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseService {
@@ -10,9 +11,12 @@ public class DatabaseService {
     static final String USER = "rishabhjain";
     static final String PASSWORD = "rishabhjain";
     static ComboPooledDataSource cpds = new ComboPooledDataSource();
+    static Connection con;
+    static boolean autoCommit = true;
 
     static {
         try {
+            Connection con = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             cpds.setDriverClass("org.postgresql.Driver");
             cpds.setJdbcUrl(DB_URL);
             cpds.setUser(USER);
@@ -26,9 +30,17 @@ public class DatabaseService {
         }
     }
 
+    static void setAutoCommit(boolean val) {
+        autoCommit = val;
+    }
+
     static Connection getConnection() {
         try {
-            return cpds.getConnection();
+            con = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            if (!autoCommit)
+                con.setAutoCommit(false);
+            return con;
+//            return cpds.getConnection();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

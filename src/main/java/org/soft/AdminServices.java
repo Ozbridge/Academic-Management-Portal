@@ -1,13 +1,16 @@
 package org.soft;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class AdminServices extends AcademicServices {
-    int addCourse(String title, String code, String dept, int credits) {
-        String query = "INSERT INTO COURSES VALUES (?, ?, ?, ?)";
+    int addCourse(String title, String code, String dept, int credits, boolean isbtp) {
+        String query = "INSERT INTO COURSES VALUES (?, ?, ?, ?, true, ?)";
         try {
             Connection con = DatabaseService.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
@@ -15,7 +18,32 @@ public class AdminServices extends AcademicServices {
             ps.setString(2, code);
             ps.setString(3, dept);
             ps.setInt(4, credits);
+            ps.setBoolean(5, isbtp);
             ps.execute();
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Enter the number of prerequisites: ");
+            int n = sc.nextInt();
+            for (int i = 0; i < n; i++) {
+                System.out.println("Enter pre-requisite course id: ");
+                addPrerequisites(code, sc.next());
+            }
+            return 0;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 1;
+    }
+
+    int addPrerequisites(String course, String prereq) {
+        String query = "INSERT INTO PREREQUISITES VALUES (?, ?)";
+        try {
+            Connection con = DatabaseService.getConnection();
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, course);
+            ps.setString(2, prereq);
+            ps.execute();
+            ps.close();
+            return 0;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -55,7 +83,7 @@ public class AdminServices extends AcademicServices {
     }
 
     int removeCourse(String code) {
-        String query = "DELETE FROM COURSES WHERE id = ?";
+        String query = "UPDATE courses set active = false WHERE id = ?";
         try {
             Connection con = DatabaseService.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
@@ -65,7 +93,7 @@ public class AdminServices extends AcademicServices {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return 1;
+        return 0;
     }
 
     String getGrade(String studentid, String courseid, String semester) {
@@ -86,7 +114,7 @@ public class AdminServices extends AcademicServices {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return "##";
+        return null;
     }
 
     String generateTranscript(String studentid, String semester) {
@@ -103,10 +131,41 @@ public class AdminServices extends AcademicServices {
                 ans.append(rs.getString(1)).append(":\t").append(rs.getString(2)).append("\n");
             }
             con.close();
+            String currentPath = new java.io.File(".").getCanonicalPath();
+            currentPath = currentPath + "/transcripts/" + studentid + "_" + semester + ".txt";
+            File fd = new File(currentPath);
+            FileWriter fw = new FileWriter(fd);
+            fw.write(ans.toString());
+            fw.close();
+            System.out.println("Transcript save to : " + currentPath);
             return ans.toString();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return "##";
+        return "";
+    }
+
+    int getContactDetails(String userid) {
+        String query = "SELECT username, phone, email from users where userid = ?";
+        try {
+            Connection con = DatabaseService.getConnection();
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, userid);
+            ResultSet rs = ps.executeQuery();
+            String out = "No user found!";
+            if (rs.next()) {
+                out = "Name: " + rs.getString(1) + " Phone: " + rs.getString(2) + " Email: " + rs.getString(3) + "\n";
+                con.close();
+                System.out.println(out);
+                return 0;
+            } else {
+                con.close();
+                System.out.println(out);
+                return 1;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 1;
     }
 }
