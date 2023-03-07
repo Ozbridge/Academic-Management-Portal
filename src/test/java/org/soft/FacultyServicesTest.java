@@ -4,12 +4,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.crypto.Data;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class FacultyServicesTest {
 
@@ -20,12 +18,16 @@ class FacultyServicesTest {
         DatabaseService.setAutoCommit(false);
         facultyServices = new FacultyServices("cse001", "CSE");
     }
-    
+
+    @Test
+    void seeSelfOfferings() {
+        assertEquals(0, facultyServices.seeSelfOfferings("2022-II"));
+    }
 
     @Test
     void addOffering() {
-        String forDept[] = {"CSE", "CHE"};
-        boolean isCore[] = {true, false};
+        String[] forDept = {"CSE", "CHE"};
+        boolean[] isCore = {true, false};
         assertEquals(0, facultyServices.addOffering("CS503", "2023-I", forDept, isCore, 7.5));
         assertEquals(1, facultyServices.addOffering("CS599", "2023-I", forDept, isCore, 7.5));
     }
@@ -33,6 +35,7 @@ class FacultyServicesTest {
     @Test
     void removeOffering() {
         assertEquals(0, facultyServices.removeOffering("CS503", "2022-II"));
+        assertEquals(1, facultyServices.removeOffering("CS304", "2022-II"));
     }
 
     @Test
@@ -49,7 +52,7 @@ class FacultyServicesTest {
     @Test
     void getGrade() {
         assertEquals("A", facultyServices.getGrade("2020csb1198", "CS503", "2022-II"));
-        assertEquals(null, facultyServices.getGrade("2020csb1198", "CS539", "2022-II"));
+        assertNull(facultyServices.getGrade("2020csb1198", "CS539", "2022-II"));
     }
 
     @Test

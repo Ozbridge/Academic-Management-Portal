@@ -25,7 +25,8 @@ public class FacultyMenu implements Menu {
                 "4. See enrolled Students.\n" +
                 "5. Get Student grade in a course.\n" +
                 "6. Update Contact Details.\n" +
-                "7. Get contact details\n");
+                "7. Get contact details\n" +
+                "8. See your Offerings");
     }
 
     private void addOffering() {
@@ -94,32 +95,25 @@ public class FacultyMenu implements Menu {
 
 
         switch (input) {
-            case "1":
-                addOffering();
-                break;
-            case "2":
-                removeOffering();
-                break;
-            case "3":
-                uploadGrades();
-                break;
-            case "4":
-                seeEnrolledStudents();
-                break;
-            case "5":
-                getStudentGrade();
-                break;
-            case "6":
-                facultyServices.updateContactDetails(facultyServices.facultyID);
-                break;
-            case "7":
+            case "1" -> addOffering();
+            case "2" -> removeOffering();
+            case "3" -> uploadGrades();
+            case "4" -> seeEnrolledStudents();
+            case "5" -> getStudentGrade();
+            case "6" -> facultyServices.updateContactDetails(facultyServices.facultyID);
+            case "7" -> {
                 sc = new Scanner(System.in);
                 System.out.println("Enter UserID to get contact details: ");
                 studentid = sc.next();
                 facultyServices.getContactDetails(studentid);
-                break;
-            default:
-                System.out.println("Invalid input, try again...");
+            }
+            case "8" -> {
+                sc = new Scanner(System.in);
+                System.out.println("Enter semester: ");
+                semester = sc.next();
+                facultyServices.seeSelfOfferings(semester);
+            }
+            default -> System.out.println("Invalid input, try again...");
         }
     }
 }

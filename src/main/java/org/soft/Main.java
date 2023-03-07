@@ -43,7 +43,7 @@ public class Main {
             if (sc.next().equals("quit"))
                 break;
         }
-        DatabaseService.cpds.close();
+//        DatabaseService.cpds.close();
     }
 
 }

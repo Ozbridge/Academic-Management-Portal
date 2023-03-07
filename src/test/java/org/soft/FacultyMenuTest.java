@@ -64,8 +64,12 @@ class FacultyMenuTest {
         in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
         facultyMenu.doStuff("7");
-
+        input = "2022-II\n";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
         facultyMenu.doStuff("8");
+        facultyMenu.doStuff("9");
+
 
     }
 

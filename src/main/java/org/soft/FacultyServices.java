@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class FacultyServices extends AcademicServices {
@@ -39,18 +40,26 @@ public class FacultyServices extends AcademicServices {
             for (int i = 0; i < for_dept.length; i++) {
                 ps = con.prepareStatement(query);
                 ps.setString(1, course_id);
+                //noinspection JpaQueryApiInspection
                 ps.setString(2, "Offering");
+                //noinspection JpaQueryApiInspection
                 ps.setString(3, semester);
+                //noinspection JpaQueryApiInspection
                 ps.setString(4, for_dept[i]);
+                //noinspection JpaQueryApiInspection
                 ps.setBoolean(5, is_core[i]);
+                //noinspection JpaQueryApiInspection
                 ps.setDouble(6, cgpa);
                 ps.execute();
             }
             query = "INSERT INTO offering_instructors values (?, ?, ?, ?)";
             ps = con.prepareStatement(query);
             ps.setString(1, course_id);
+            //noinspection JpaQueryApiInspection
             ps.setString(2, semester);
+            //noinspection JpaQueryApiInspection
             ps.setString(3, facultyID);
+            //noinspection JpaQueryApiInspection
             ps.setBoolean(4, true);
             ps.execute();
             con.close();
@@ -63,6 +72,10 @@ public class FacultyServices extends AcademicServices {
 
     int removeOffering(String course_id, String semester) {
 
+        if (!getOfferedCourses(semester).contains(course_id)) {
+            System.out.println("Unalbe to process request...");
+            return 1;
+        }
         String query = "UPDATE offerings SET status = 'Cancelled' WHERE course_id = ? and semester = ?";
         try {
             Connection con = DatabaseService.getConnection();
@@ -79,7 +92,9 @@ public class FacultyServices extends AcademicServices {
     }
 
     private ArrayList<String> getOfferedCourses(String semester) {
-        String query = "select course_id from offering_instructors where instructor_id = ? and semester = ?";
+//        String query = "select course_id from offering_instructors where instructor_id = ? and semester = ?";
+        String query = "select offerings.course_id from offerings, offering_instructors where offerings.course_id = offering_instructors.course_id and offering_instructors.semester = offerings.semester and offering_instructors.instructor_id =? and offerings.semester = ? and status != 'Cancelled'";
+
         try {
             Connection con = DatabaseService.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
@@ -180,6 +195,29 @@ public class FacultyServices extends AcademicServices {
                 return 1;
             }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 1;
+    }
+
+    int seeSelfOfferings(String semester) {
+
+        try {
+            String query = "select offerings.course_id, name, for_dept, is_core from offerings, courses, offering_instructors where offerings.course_id = id and offerings.semester = ? and offering_instructors.course_id = offerings.course_id and offering_instructors.semester = offerings.semester and offering_instructors.instructor_id =? and status != 'Cancelled'";
+            Connection con = DatabaseService.getConnection();
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, semester);
+            ps.setString(2, facultyID);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                System.out.println("Course ID: " + rs.getString(1) +
+                        " Title: " + rs.getString(2) +
+                        " Dept: " + rs.getString(3) + " Type: " + ((rs.getBoolean(4)) ? "Core" : "Elective"));
+            }
+            con.close();
+            return 0;
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return 1;

@@ -13,89 +13,94 @@ public class StudentServices extends AcademicServices {
         this.dept = dept;
     }
 
-    int getRegisteredCredits(String semester) {
+    int getRegisteredCourses(String semester) throws SQLException {
+        String query = "SELECT course_id, name, grade " +
+                "FROM enrollments, courses " +
+                "WHERE courses.id = enrollments.course_id " +
+                "and student_id = ? and semester = ? and status = 'Enrolled'";
+        Connection con = DatabaseService.getConnection();
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setString(1, studentId);
+        ps.setString(2, semester);
+        ResultSet rs = ps.executeQuery();
+        ArrayList<String> ans = new ArrayList<>();
+        while (rs.next()) {
+            System.out.println("CourseID: " + rs.getString(1) + " Course title: " + rs.getString(2) + " Grade: " + rs.getString(3));
+        }
+        System.out.println("Total registered credits: " + getRegisteredCredits(semester));
+        con.close();
+        return 0;
+    }
+
+    int getRegisteredCredits(String semester) throws SQLException {
         int ans = 0;
         String query = "SELECT SUM(credits) " +
                 "FROM enrollments, courses " +
                 "WHERE courses.id = enrollments.course_id " +
                 "and student_id = ? and semester = ? and status = 'Enrolled'";
-        try {
-            Connection con = DatabaseService.getConnection();
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, studentId);
-            ps.setString(2, semester);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
+        Connection con = DatabaseService.getConnection();
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setString(1, studentId);
+        ps.setString(2, semester);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
             ans = rs.getInt(1);
-            return ans;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
-        return 0;
+        con.close();
+        return ans;
+
     }
 
-    int getEarnedCredits(String semester) {
+    int getEarnedCredits(String semester) throws SQLException {
         int ans = 0;
         String query = "SELECT SUM(credits) " +
                 "FROM enrollments, courses " +
                 "WHERE courses.id = enrollments.course_id  AND EXISTS (select * from grades where enrollments.grade = grades.grade and weight != 0)" +
                 "and student_id = ? and semester = ?";
-        try {
-            Connection con = DatabaseService.getConnection();
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, studentId);
-            ps.setString(2, semester);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            ans = rs.getInt(1);
-            return ans;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return 0;
+        Connection con = DatabaseService.getConnection();
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setString(1, studentId);
+        ps.setString(2, semester);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        ans = rs.getInt(1);
+        con.close();
+        return ans;
     }
 
-    private int getWeightedEarnedCredits(String semester) {
+    private int getWeightedEarnedCredits(String semester) throws SQLException {
         int ans = 0;
         String query = "SELECT SUM(credits*(select weight from grades where enrollments.grade = grades.grade)) " +
                 "FROM enrollments, courses " +
                 "WHERE courses.id = enrollments.course_id " +
                 "and student_id = ? and semester = ?";
-        try {
-            Connection con = DatabaseService.getConnection();
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, studentId);
-            ps.setString(2, semester);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            ans = rs.getInt(1);
-            return ans;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return 0;
-    }
-
-    ArrayList<String> getCompletedCourses() {
-        ArrayList<String> ans = new ArrayList<>();
-        try {
-            String query = "SELECT course_id from enrollments where student_id = ? and grade is not null and grade <> 'F'";
-            Connection con = DatabaseService.getConnection();
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, studentId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                ans.add(rs.getString(1));
-            }
-            con.close();
-            return ans;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        Connection con = DatabaseService.getConnection();
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setString(1, studentId);
+        ps.setString(2, semester);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        ans = rs.getInt(1);
+        con.close();
         return ans;
     }
 
-    private boolean hasCompletedPrerequisites(String courseid) {
+    ArrayList<String> getCompletedCourses() throws SQLException {
+        ArrayList<String> ans = new ArrayList<>();
+        String query = "SELECT course_id from enrollments where student_id = ? and grade is not null and grade <> 'F'";
+        Connection con = DatabaseService.getConnection();
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setString(1, studentId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            ans.add(rs.getString(1));
+        }
+        con.close();
+        return ans;
+
+    }
+
+    private boolean hasCompletedPrerequisites(String courseid) throws SQLException {
         ArrayList<String> completedCourses = getCompletedCourses();
 
         for (String course :
@@ -107,64 +112,58 @@ public class StudentServices extends AcademicServices {
         return true;
     }
 
-    private int getCreditLimits(String semester) {
+    private int getCreditLimits(String semester) throws SQLException {
         String query = "select id from semesters where id < ? order by id desc limit 2";
-        try {
-            Connection con = DatabaseService.getConnection();
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, semester);
-            ResultSet rs = ps.executeQuery();
-            int ans = 0;
-            for (int i = 0; i < 2; i++) {
-                if (rs.next()) {
-                    ans += getEarnedCredits(rs.getString(1));
-                } else {
-                    ans += 6;
-                }
+
+        Connection con = DatabaseService.getConnection();
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setString(1, semester);
+        ResultSet rs = ps.executeQuery();
+        int ans = 0;
+        for (int i = 0; i < 2; i++) {
+            if (rs.next()) {
+                ans += getEarnedCredits(rs.getString(1));
+            } else {
+                ans += 6;
             }
-            ans = (int) Math.ceil(ans * 1.25 / 2);
-//            System.out.println(ans);
-            return ans;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
-        return 0;
+        ans = (int) Math.ceil(ans * 1.25 / 2);
+//            System.out.println(ans);
+        con.close();
+        return ans;
+
     }
 
-    private double getCGPARequirement(String course, String semester) {
+    private double getCGPARequirement(String course, String semester) throws SQLException {
         String query = "Select cgpa from offerings where course_id = ? and semester = ?";
-        try {
-            Connection con = DatabaseService.getConnection();
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, course);
-            ps.setString(2, semester);
-            ResultSet rs = ps.executeQuery();
-            double ans = 0;
-            if (rs.next()) {
-                ans = rs.getDouble(1);
-            }
-            con.close();
-            return ans;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
+        Connection con = DatabaseService.getConnection();
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setString(1, course);
+        ps.setString(2, semester);
+        ResultSet rs = ps.executeQuery();
+        double ans = 0;
+        if (rs.next()) {
+            ans = rs.getDouble(1);
         }
-        return 0;
+        con.close();
+        return ans;
     }
 
     int creditRequest(String courseid, String semester) {
-        Date deadline = getAddDropDate(semester);
-        if (deadline == null
-                || deadline.compareTo(new Date()) < 0
-                || getCredits(courseid) + getRegisteredCredits(semester) > getCreditLimits(semester)
-                || !hasCompletedPrerequisites(courseid)
-                || calculateCGPA() < getCGPARequirement(courseid, semester)
-        ) {
-            System.out.println("Unable to credit...");
-            return 1;
-        }
 
-        String query = "SELECT course_id, is_core, isBTP FROM offerings, courses WHERE courses.id = course_id and course_id = ? and semester = ? and for_dept = ? and status = 'Offering'";
         try {
+            Date deadline = getAddDropDate(semester);
+            if (deadline == null
+                    || deadline.compareTo(new Date()) < 0
+                    || getCredits(courseid) + getRegisteredCredits(semester) > getCreditLimits(semester)
+                    || !hasCompletedPrerequisites(courseid)
+                    || calculateCGPA() < getCGPARequirement(courseid, semester)
+            ) {
+                System.out.println("Unable to credit...");
+                return 1;
+            }
+            String query = "SELECT course_id, is_core, isBTP FROM offerings, courses WHERE courses.id = course_id and course_id = ? and semester = ? and for_dept = ? and status = 'Offering'";
             Connection con = DatabaseService.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, courseid);
@@ -232,6 +231,7 @@ public class StudentServices extends AcademicServices {
             ps.setString(2, studentId);
             ps.setString(3, semester);
             ps.execute();
+            con.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -247,21 +247,19 @@ public class StudentServices extends AcademicServices {
 //    }
 
 
-    double calculateCGPA() {
+    double calculateCGPA() throws SQLException {
         int creds = 0, earnedCreds = 0;
-        try {
-            String query = "select semester from enrollments where student_id = ? group by semester";
-            Connection con = DatabaseService.getConnection();
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, studentId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                creds += getEarnedCredits(rs.getString(1));
-                earnedCreds += getWeightedEarnedCredits(rs.getString(1));
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
+        String query = "select semester from enrollments where student_id = ? group by semester";
+        Connection con = DatabaseService.getConnection();
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setString(1, studentId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            creds += getEarnedCredits(rs.getString(1));
+            earnedCreds += getWeightedEarnedCredits(rs.getString(1));
         }
+        con.close();
         return earnedCreds / (creds * 1.0);
     }
 }

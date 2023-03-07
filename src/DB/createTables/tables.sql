@@ -25,8 +25,8 @@ CREATE TABLE students
 
 CREATE TABLE courses
 (
-    name    VARCHAR(30) NOT NULL,
-    id      VARCHAR(5)  NOT NULL,
+    name    VARCHAR(50) NOT NULL,
+    id      VARCHAR(10) NOT NULL,
     dept    VARCHAR(5)  NOT NULL,
     credits INTEGER     NOT NULL,
     active  BOOLEAN     NOT NUll,
@@ -36,8 +36,8 @@ CREATE TABLE courses
 
 CREATE TABLE prerequisites
 (
-    courseid    VARCHAR(5) REFERENCES courses (id),
-    precourseid VARCHAR(5) REFERENCES courses (id),
+    courseid    VARCHAR(10) REFERENCES courses (id),
+    precourseid VARCHAR(10) REFERENCES courses (id),
     PRIMARY KEY (courseid, precourseid)
 );
 
@@ -54,7 +54,7 @@ CREATE TABLE semesters
 
 CREATE TABLE offerings
 (
-    course_id VARCHAR(5)       NOT NULL,
+    course_id VARCHAR(10)      NOT NULL,
     status    VARCHAR(10)      NOT NULL,
     semester  VARCHAR(10)      NOT NULL REFERENCES semesters (id),
     for_dept  VARCHAR(5)       NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE offerings
 
 CREATE TABLE offering_instructors
 (
-    course_id     VARCHAR(5) REFERENCES courses (id),
+    course_id     VARCHAR(10) REFERENCES courses (id),
     semester      VARCHAR(10) REFERENCES semesters (id),
     instructor_id VARCHAR(20) REFERENCES users (userid),
     is_coord      BOOLEAN NOT NULL
@@ -89,7 +89,7 @@ CREATE TABLE graduating_requirements
 
 CREATE TABLE enrollments
 (
-    course_id   VARCHAR(5),
+    course_id   VARCHAR(10),
     student_id  VARCHAR(20) REFERENCES students (student_id),
     status      VARCHAR(10),
     semester    VARCHAR(10),
@@ -99,25 +99,9 @@ CREATE TABLE enrollments
 );
 
 
-INSERT INTO users
-values ('rishabhjain1909', 'Rishabh Jain', 'strongpassword', 'STU');
-INSERT INTO semesters
-values ('2023-W', '2023-01-02', '2023-05-05', '2023-01-16', '2023-02-28');
-INSERT INTO courses
-values ('Data Structures', 'CS201', 'CSE', 4);
-INSERT INTO courses
-values ('Machine Learning', 'CS503', 'CSE', 4);
-INSERT INTO offerings
-values ('CS503', 'Enrolling', '2023-W', 'CSE', true);
-INSERT INTO offerings
-values ('CS503', 'Enrolling', '2023-W', 'MNC', true);
-INSERT INTO offerings
-values ('CS503', 'Enrolling', '2023-W', 'EE', false);
+CREATE TABLE logs
+(
+    userid  VARCHAR(20) references users (userid),
+    time_in TIMESTAMP
+);
 
-
-SELECT name, id, is_core, credits
-FROM offerings,
-     courses
-WHERE id = course_id
-  and semester = '2023-W'
-  and for_dept = 'CSE';

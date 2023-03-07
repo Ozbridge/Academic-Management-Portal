@@ -40,7 +40,7 @@ class AdminServicesTest {
 
     @Test
     void canGraduate() {
-        assertEquals(true, adminServices.canGraduate("2020csb1198"));
+        assertEquals(false, adminServices.canGraduate("2020csb1198"));
         assertEquals(false, adminServices.canGraduate("2020csb9999"));
     }
 

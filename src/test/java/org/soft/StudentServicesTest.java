@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,18 +20,23 @@ class StudentServicesTest {
     }
 
     @Test
-    void getRegisteredCredits() {
-        assertEquals(6, studentServices.getRegisteredCredits("2023-I"));
+    void getRegisteredCourses() throws SQLException {
+        assertEquals(0, studentServices.getRegisteredCourses("2022-II"));
+    }
+
+    @Test
+    void getRegisteredCredits() throws SQLException {
+        assertEquals(3, studentServices.getRegisteredCredits("2023-I"));
         assertEquals(0, studentServices.getRegisteredCredits("2023-II"));
     }
 
     @Test
-    void getEarnedCredits() {
+    void getEarnedCredits() throws SQLException {
         assertEquals(8, studentServices.getEarnedCredits("2022-II"));
     }
 
     @Test
-    void getCompletedCourses() {
+    void getCompletedCourses() throws SQLException {
         ArrayList<String> list = new ArrayList<>(), expected = studentServices.getCompletedCourses();
         list.add("CS503");
         list.add("CS304");
@@ -42,6 +48,7 @@ class StudentServicesTest {
     void creditRequest() {
         assertEquals(0, studentServices.creditRequest("GE111", "2023-I"));
         assertEquals(1, studentServices.creditRequest("CP303", "2023-I"));
+        assertEquals(0, studentServices.creditRequest("CP301", "2023-I"));
         assertEquals(1, studentServices.creditRequest("CS533", "2023-I"));
     }
 
@@ -54,7 +61,7 @@ class StudentServicesTest {
 
 
     @Test
-    void calculateCGPA() {
+    void calculateCGPA() throws SQLException {
         assertEquals(10.0d, studentServices.calculateCGPA());
     }
 

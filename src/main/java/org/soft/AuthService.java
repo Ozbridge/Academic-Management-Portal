@@ -1,8 +1,7 @@
 package org.soft;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
+import java.util.Date;
 
 public class AuthService {
     String[] login(String username, String password) {
@@ -13,10 +12,17 @@ public class AuthService {
             ps.setString(1, username);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            String[] ans = {
-                    rs.getString(1), rs.getString(2), rs.getString(3)
-            };
+            String ans[] = new String[]{};
+            if (rs.next()) {
+                ans = new String[]{
+                        rs.getString(1), rs.getString(2), rs.getString(3)
+                };
+                query = "INSERT INTO logs VALUES (?, ?)";
+                ps = con.prepareStatement(query);
+                ps.setString(1, username);
+                ps.setTimestamp(2, new Timestamp(new Date().getTime()));
+                ps.execute();
+            }
             con.close();
             return ans;
 
