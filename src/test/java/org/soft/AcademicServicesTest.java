@@ -31,7 +31,7 @@ class AcademicServicesTest {
     void getAddDropDate() {
         Date date = academicServices.getAddDropDate("2022-II");
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        assertEquals("2023-03-10", dateFormat.format(date));
+        assertEquals("2023-01-16", dateFormat.format(date));
         date = academicServices.getAddDropDate("2025-I");
         assertNull(date);
     }

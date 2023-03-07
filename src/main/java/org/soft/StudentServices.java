@@ -55,7 +55,7 @@ public class StudentServices extends AcademicServices {
         return 0;
     }
 
-    int getWeightedEarnedCredits(String semester) {
+    private int getWeightedEarnedCredits(String semester) {
         int ans = 0;
         String query = "SELECT SUM(credits*(select weight from grades where enrollments.grade = grades.grade)) " +
                 "FROM enrollments, courses " +
@@ -95,7 +95,7 @@ public class StudentServices extends AcademicServices {
         return ans;
     }
 
-    boolean hasCompletedPrerequisites(String courseid) {
+    private boolean hasCompletedPrerequisites(String courseid) {
         ArrayList<String> completedCourses = getCompletedCourses();
 
         for (String course :
@@ -107,7 +107,7 @@ public class StudentServices extends AcademicServices {
         return true;
     }
 
-    int getCreditLimits(String semester) {
+    private int getCreditLimits(String semester) {
         String query = "select id from semesters where id < ? order by id desc limit 2";
         try {
             Connection con = DatabaseService.getConnection();
@@ -123,7 +123,7 @@ public class StudentServices extends AcademicServices {
                 }
             }
             ans = (int) Math.ceil(ans * 1.25 / 2);
-            System.out.println(ans);
+//            System.out.println(ans);
             return ans;
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -131,7 +131,7 @@ public class StudentServices extends AcademicServices {
         return 0;
     }
 
-    double getCGPARequirement(String course, String semester) {
+    private double getCGPARequirement(String course, String semester) {
         String query = "Select cgpa from offerings where course_id = ? and semester = ?";
         try {
             Connection con = DatabaseService.getConnection();
@@ -160,10 +160,10 @@ public class StudentServices extends AcademicServices {
                 || calculateCGPA() < getCGPARequirement(courseid, semester)
         ) {
             System.out.println("Unable to credit...");
-            return -1;
+            return 1;
         }
 
-        String query = "SELECT course_id, is_core, \"isBTP\" FROM offerings, courses WHERE courses.id = course_id and course_id = ? and semester = ? and for_dept = ? and status = 'Offering'";
+        String query = "SELECT course_id, is_core, isBTP FROM offerings, courses WHERE courses.id = course_id and course_id = ? and semester = ? and for_dept = ? and status = 'Offering'";
         try {
             Connection con = DatabaseService.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
@@ -174,7 +174,7 @@ public class StudentServices extends AcademicServices {
             if (!rs.isBeforeFirst()) {
                 System.out.println("Course not offered...");
                 con.close();
-                return -1;
+                return 1;
             }
             rs.next();
             String creditedas = "E";
@@ -197,11 +197,12 @@ public class StudentServices extends AcademicServices {
             //noinspection JpaQueryApiInspection
             ps.setString(6, creditedas);
             ps.execute();
-
+            con.close();
+            return 0;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return 0;
+        return 1;
     }
 
     int dropRequest(String courseid, String semester) {
@@ -210,7 +211,7 @@ public class StudentServices extends AcademicServices {
 
         if (deadline == null || deadline.compareTo(new Date()) < 0) {
             System.out.println("Unable to process request...");
-            return -1;
+            return 1;
         }
         try {
             Connection con = DatabaseService.getConnection();
@@ -221,7 +222,8 @@ public class StudentServices extends AcademicServices {
             ResultSet rs = ps.executeQuery();
             if (!rs.isBeforeFirst()) {
                 con.close();
-                return -1;
+                System.out.println("Course not credited...");
+                return 1;
             }
 
             query = "UPDATE enrollments SET status = 'Dropped' WHERE course_id = ? and student_id = ? and semester = ?";
@@ -237,16 +239,12 @@ public class StudentServices extends AcademicServices {
         return 0;
     }
 
-    int withdrawRequest(String courseid, String semester) {
-        return 0;
-    }
-
-    double calculateSGPA(String semester) {
-        int creds = 0, earnedCreds = 0;
-        creds += getEarnedCredits(semester);
-        earnedCreds += getWeightedEarnedCredits(semester);
-        return earnedCreds / (creds * 1.0);
-    }
+//    double calculateSGPA(String semester) {
+//        int creds = 0, earnedCreds = 0;
+//        creds += getEarnedCredits(semester);
+//        earnedCreds += getWeightedEarnedCredits(semester);
+//        return earnedCreds / (creds * 1.0);
+//    }
 
 
     double calculateCGPA() {

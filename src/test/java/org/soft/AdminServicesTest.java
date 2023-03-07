@@ -46,7 +46,7 @@ class AdminServicesTest {
 
     @Test
     void removeCourse() {
-        assertEquals(0, adminServices.removeCourse("CS503"));
+        assertEquals(0, adminServices.removeCourse("CS304"));
         assertEquals(0, adminServices.removeCourse("CS999"));
     }
 

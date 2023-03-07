@@ -30,8 +30,9 @@ public class DatabaseService {
         }
     }
 
-    static void setAutoCommit(boolean val) {
+    static int setAutoCommit(boolean val) {
         autoCommit = val;
+        return 0;
     }
 
     static Connection getConnection() {
@@ -42,7 +43,9 @@ public class DatabaseService {
             return con;
 //            return cpds.getConnection();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
+        return null;
     }
 }

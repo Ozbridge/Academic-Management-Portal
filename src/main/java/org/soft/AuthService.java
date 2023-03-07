@@ -20,9 +20,8 @@ public class AuthService {
             con.close();
             return ans;
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
-        String[] ans = {};
-        return ans;
+        return new String[]{};
     }
 }

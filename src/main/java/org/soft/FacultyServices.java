@@ -20,11 +20,24 @@ public class FacultyServices extends AcademicServices {
     }
 
     int addOffering(String course_id, String semester, String[] for_dept, boolean[] is_core, double cgpa) {
-        String query = "INSERT INTO offerings values (?, ?, ?, ?, ?, ?)";
         try {
+            String query = "select active from courses where id = ?";
             Connection con = DatabaseService.getConnection();
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, course_id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                if (!rs.getBoolean(1)) {
+                    System.out.println("Course not in Catalog");
+                    return 1;
+                }
+            } else {
+                System.out.println("Course not in Catalog");
+                return 1;
+            }
+            query = "INSERT INTO offerings values (?, ?, ?, ?, ?, ?)";
             for (int i = 0; i < for_dept.length; i++) {
-                PreparedStatement ps = con.prepareStatement(query);
+                ps = con.prepareStatement(query);
                 ps.setString(1, course_id);
                 ps.setString(2, "Offering");
                 ps.setString(3, semester);
@@ -34,7 +47,7 @@ public class FacultyServices extends AcademicServices {
                 ps.execute();
             }
             query = "INSERT INTO offering_instructors values (?, ?, ?, ?)";
-            PreparedStatement ps = con.prepareStatement(query);
+            ps = con.prepareStatement(query);
             ps.setString(1, course_id);
             ps.setString(2, semester);
             ps.setString(3, facultyID);

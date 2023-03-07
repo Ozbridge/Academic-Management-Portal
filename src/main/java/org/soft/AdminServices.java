@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class AdminServices extends AcademicServices {
     int addCourse(String title, String code, String dept, int credits, boolean isbtp) {
-        String query = "INSERT INTO COURSES VALUES (?, ?, ?, ?, true, ?)";
+        String query = "INSERT INTO COURSES VALUES (?, ?, ?, ?, true, ?) on conflict (id) do update SET name = EXCLUDED.name, dept = excluded.dept, credits = excluded.credits, active = excluded.active, isbtp = excluded.isbtp";
         try {
             Connection con = DatabaseService.getConnection();
             PreparedStatement ps = con.prepareStatement(query);

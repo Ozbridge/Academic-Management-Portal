@@ -7,6 +7,9 @@ import java.util.Scanner;
 
 public class AdminMenu implements Menu {
     AdminServices adminServices;
+    Scanner sc = new Scanner(System.in);
+    String semester, course, path, studentid, title, dept;
+    int n;
 
     public AdminMenu() {
         this.adminServices = new AdminServices();
@@ -23,57 +26,84 @@ public class AdminMenu implements Menu {
                 "6. Get Contact Details of a user.\n");
     }
 
+    private void addCourseToCatalog() {
+        sc = new Scanner(System.in);
+        System.out.println("Enter course ID: ");
+        course = sc.next();
+        System.out.println("Enter course title: ");
+        sc.nextLine();
+        title = sc.nextLine();
+        System.out.println("Enter offering department code: ");
+        dept = sc.next();
+        System.out.println("Enter credits: ");
+        n = sc.nextInt();
+        System.out.println("Do these count as BTP credits, enter true/false");
+        boolean ip = (sc.next().equals("true")) ? true : false;
+        adminServices.addCourse(title, course, dept, n, ip);
+    }
+
+    private void removeCourseInCatalog() {
+        sc = new Scanner(System.in);
+        System.out.println("Enter course ID: ");
+        course = sc.next();
+        adminServices.removeCourse(course);
+    }
+
+    private void generateTranscript() {
+        sc = new Scanner(System.in);
+        System.out.println("StudentID: ");
+        studentid = sc.next();
+        System.out.println("Enter semester: ");
+        semester = sc.next();
+        System.out.println(adminServices.generateTranscript(studentid, semester));
+    }
+
+    private void checkIfStudentCanGraduate() {
+        sc = new Scanner(System.in);
+        System.out.println("Enter Student ID: ");
+        studentid = sc.next();
+        System.out.println(adminServices.canGraduate(studentid));
+    }
+
+    private void getStudentGradeInCourse() {
+        sc = new Scanner(System.in);
+        System.out.println("StudentID: ");
+        studentid = sc.next();
+        System.out.println("Enter course ID: ");
+        course = sc.next();
+        System.out.println("Enter semester: ");
+        semester = sc.next();
+        System.out.println("The grade is: " + adminServices.getGrade(studentid, course, semester));
+    }
+
+    private void getContactDetails() {
+        sc = new Scanner(System.in);
+        System.out.println("Enter UserID to get contact details: ");
+        studentid = sc.next();
+        adminServices.getContactDetails(studentid);
+    }
 
     public void doStuff(String input) {
-        Scanner sc = new Scanner(System.in);
-        String semester, course, path, studentid, title, dept;
-        int n;
+
 
         switch (input) {
             case "1":
-                System.out.println("Enter course ID: ");
-                course = sc.next();
-                System.out.println("Enter course title: ");
-                sc.nextLine();
-                title = sc.nextLine();
-                System.out.println("Enter offering department code: ");
-                dept = sc.next();
-                System.out.println("Enter credits: ");
-                n = sc.nextInt();
-                System.out.println("Do these count as BTP credits, enter true/false");
-                boolean ip = (sc.next().equals("true")) ? true : false;
-                adminServices.addCourse(title, course, dept, n, ip);
+                addCourseToCatalog();
                 break;
             case "2":
-                System.out.println("Enter course ID: ");
-                course = sc.next();
-                adminServices.removeCourse(course);
+                removeCourseInCatalog();
                 break;
             case "3":
-                System.out.println("StudentID: ");
-                studentid = sc.next();
-                System.out.println("Enter semester: ");
-                semester = sc.next();
-                System.out.println(adminServices.generateTranscript(studentid, semester));
+                generateTranscript();
                 break;
             case "4":
-                System.out.println("Enter Student ID: ");
-                studentid = sc.next();
-                System.out.println(adminServices.canGraduate(studentid));
+                checkIfStudentCanGraduate();
                 break;
             case "5":
-                System.out.println("StudentID: ");
-                studentid = sc.next();
-                System.out.println("Enter course ID: ");
-                course = sc.next();
-                System.out.println("Enter semester: ");
-                semester = sc.next();
-                System.out.println("The grade is: " + adminServices.getGrade(studentid, course, semester));
+                getStudentGradeInCourse();
                 break;
             case "6":
-                System.out.println("Enter UserID to get contact details: ");
-                studentid = sc.next();
-                adminServices.getContactDetails(studentid);
+                getContactDetails();
                 break;
             default:
                 System.out.println("Invalid input, try again...");
