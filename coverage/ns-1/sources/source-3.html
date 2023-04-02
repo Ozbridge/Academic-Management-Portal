@@ -1,0 +1,274 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > AdminServices</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.soft</a>
+</div>
+
+<h1>Coverage Summary for Class: AdminServices (org.soft)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminServices</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76%
+  </span>
+  <span class="absValue">
+    (114/150)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.soft;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.io.FileWriter;
+&nbsp;import java.sql.Connection;
+&nbsp;import java.sql.PreparedStatement;
+&nbsp;import java.sql.ResultSet;
+&nbsp;import java.util.HashMap;
+<b class="fc">&nbsp;import java.util.Scanner;</b>
+&nbsp;
+<b class="fc">&nbsp;public class AdminServices extends AcademicServices {</b>
+&nbsp;    int addCourse(String title, String code, String dept, int credits, boolean isbtp) {
+<b class="fc">&nbsp;        String query = &quot;INSERT INTO COURSES VALUES (?, ?, ?, ?, true, ?) on conflict (id) do update SET name = EXCLUDED.name, dept = excluded.dept, credits = excluded.credits, active = excluded.active, isbtp = excluded.isbtp&quot;;</b>
+<b class="fc">&nbsp;        try {</b>
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, title);</b>
+<b class="fc">&nbsp;            ps.setString(2, code);</b>
+<b class="fc">&nbsp;            ps.setString(3, dept);</b>
+<b class="fc">&nbsp;            ps.setInt(4, credits);</b>
+<b class="fc">&nbsp;            ps.setBoolean(5, isbtp);</b>
+<b class="fc">&nbsp;            ps.execute();</b>
+<b class="fc">&nbsp;            Scanner sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Enter the number of prerequisites: &quot;);</b>
+<b class="fc">&nbsp;            int n = sc.nextInt();</b>
+<b class="fc">&nbsp;            for (int i = 0; i &lt; n; i++) {</b>
+<b class="nc">&nbsp;                System.out.println(&quot;Enter pre-requisite course id: &quot;);</b>
+<b class="fc">&nbsp;                addPrerequisites(code, sc.next());</b>
+<b class="fc">&nbsp;            }</b>
+<b class="fc">&nbsp;            return 0;</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return 1;</b>
+&nbsp;    }
+<b class="fc">&nbsp;</b>
+&nbsp;    int addPrerequisites(String course, String prereq) {
+<b class="fc">&nbsp;        String query = &quot;INSERT INTO PREREQUISITES VALUES (?, ?)&quot;;</b>
+<b class="fc">&nbsp;        try {</b>
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, course);</b>
+<b class="fc">&nbsp;            ps.setString(2, prereq);</b>
+<b class="fc">&nbsp;            ps.execute();</b>
+<b class="fc">&nbsp;            ps.close();</b>
+<b class="fc">&nbsp;            return 0;</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return 1;</b>
+<b class="nc">&nbsp;    }</b>
+<b class="fc">&nbsp;</b>
+<b class="nc">&nbsp;    boolean canGraduate(String studentid) {</b>
+<b class="fc">&nbsp;        String query = &quot;SELECT course_id, credited_as FROM enrollments, grades where student_id = ? and enrollments.grade = grades.grade and grades.weight != 0&quot;;</b>
+<b class="fc">&nbsp;        try {</b>
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, studentid);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            HashMap&lt;String, Integer&gt; creds = new HashMap&lt;String, Integer&gt;();</b>
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                int prev = creds.get(rs.getString(2)) == null ? 0 : creds.get(rs.getString(2));</b>
+<b class="fc">&nbsp;                int courseCredits = getCredits(rs.getString(1));</b>
+<b class="fc">&nbsp;                creds.put(rs.getString(2), prev + courseCredits);</b>
+<b class="fc">&nbsp;            }</b>
+<b class="fc">&nbsp;            query = &quot;SELECT credit_type, num_required FROM graduating_requirements&quot;;</b>
+<b class="fc">&nbsp;            ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                int earnedInCategory = 0;</b>
+<b class="fc">&nbsp;                if (creds.get(rs.getString(1)) != null)</b>
+<b class="fc">&nbsp;                    earnedInCategory = creds.get(rs.getString(1));</b>
+<b class="fc">&nbsp;//                System.out.println(rs.getString(1) + &quot; &quot; + earnedInCategory);</b>
+<b class="fc">&nbsp;                if (earnedInCategory &lt; rs.getInt(2))</b>
+<b class="fc">&nbsp;                    return false;</b>
+<b class="fc">&nbsp;            }</b>
+<b class="fc">&nbsp;            con.close();</b>
+<b class="fc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return false;</b>
+<b class="nc">&nbsp;    }</b>
+<b class="nc">&nbsp;</b>
+<b class="nc">&nbsp;    int removeCourse(String code) {</b>
+<b class="fc">&nbsp;        String query = &quot;UPDATE courses set active = false WHERE id = ?&quot;;</b>
+<b class="nc">&nbsp;        try {</b>
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, code);</b>
+<b class="fc">&nbsp;            ps.execute();</b>
+<b class="fc">&nbsp;            con.close();</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return 0;</b>
+<b class="nc">&nbsp;    }</b>
+<b class="nc">&nbsp;</b>
+<b class="nc">&nbsp;    String getGrade(String studentid, String courseid, String semester) {</b>
+<b class="fc">&nbsp;        String query = &quot;SELECT grade FROM enrollments WHERE student_id = ? and semester = ? and course_id = ? and status != &#39;Dropped&#39;&quot;;</b>
+<b class="nc">&nbsp;        try {</b>
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, studentid);</b>
+<b class="fc">&nbsp;            ps.setString(2, semester);</b>
+<b class="fc">&nbsp;            ps.setString(3, courseid);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            String ans = null;</b>
+<b class="fc">&nbsp;            if (rs.next()) {</b>
+<b class="fc">&nbsp;                ans = rs.getString(1);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="fc">&nbsp;            con.close();</b>
+<b class="fc">&nbsp;            return ans;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+<b class="nc">&nbsp;    }</b>
+<b class="nc">&nbsp;</b>
+<b class="nc">&nbsp;    String generateTranscript(String studentid, String semester) {</b>
+<b class="fc">&nbsp;        String query = &quot;SELECT course_id, grade FROM enrollments WHERE student_id = ? and semester = ? and status != &#39;Dropped&#39;&quot;;</b>
+<b class="nc">&nbsp;        try {</b>
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, studentid);</b>
+<b class="fc">&nbsp;            ps.setString(2, semester);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            StringBuilder ans = new StringBuilder();</b>
+<b class="fc">&nbsp;            ans.append(studentid).append(&#39;\n&#39;).append(semester).append(&#39;\n&#39;);</b>
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                ans.append(rs.getString(1)).append(&quot;:\t&quot;).append(rs.getString(2)).append(&quot;\n&quot;);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="fc">&nbsp;            con.close();</b>
+<b class="fc">&nbsp;            String currentPath = new java.io.File(&quot;.&quot;).getCanonicalPath();</b>
+<b class="fc">&nbsp;            currentPath = currentPath + &quot;/transcripts/&quot; + studentid + &quot;_&quot; + semester + &quot;.txt&quot;;</b>
+<b class="fc">&nbsp;            File fd = new File(currentPath);</b>
+<b class="fc">&nbsp;            FileWriter fw = new FileWriter(fd);</b>
+<b class="fc">&nbsp;            fw.write(ans.toString());</b>
+<b class="fc">&nbsp;            fw.close();</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Transcript save to : &quot; + currentPath);</b>
+<b class="fc">&nbsp;            return ans.toString();</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return &quot;&quot;;</b>
+<b class="nc">&nbsp;    }</b>
+<b class="nc">&nbsp;</b>
+<b class="nc">&nbsp;    int getContactDetails(String userid) {</b>
+<b class="fc">&nbsp;        String query = &quot;SELECT username, phone, email from users where userid = ?&quot;;</b>
+<b class="nc">&nbsp;        try {</b>
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, userid);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            String out = &quot;No user found!&quot;;</b>
+<b class="fc">&nbsp;            if (rs.next()) {</b>
+<b class="fc">&nbsp;                out = &quot;Name: &quot; + rs.getString(1) + &quot; Phone: &quot; + rs.getString(2) + &quot; Email: &quot; + rs.getString(3) + &quot;\n&quot;;</b>
+<b class="fc">&nbsp;                con.close();</b>
+<b class="fc">&nbsp;                System.out.println(out);</b>
+<b class="fc">&nbsp;                return 0;</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                con.close();</b>
+<b class="fc">&nbsp;                System.out.println(out);</b>
+<b class="fc">&nbsp;                return 1;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return 1;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-07 03:32</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,228 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > FacultyMenu</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.soft</a>
+</div>
+
+<h1>Coverage Summary for Class: FacultyMenu (org.soft)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FacultyMenu</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (69/69)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.soft;
+&nbsp;
+&nbsp;import org.apache.commons.collections.bidimap.DualHashBidiMap;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Scanner;
+&nbsp;
+&nbsp;public class FacultyMenu implements Menu {
+&nbsp;    FacultyServices facultyServices;
+<b class="fc">&nbsp;    Scanner sc = new Scanner(System.in);</b>
+&nbsp;    String semester, course, path, studentid;
+&nbsp;    int n;
+&nbsp;
+<b class="fc">&nbsp;    public FacultyMenu(String facultyid, String dept) {</b>
+<b class="fc">&nbsp;        this.facultyServices = new FacultyServices(facultyid, dept);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public void showOptions() {
+<b class="fc">&nbsp;        System.out.println(&quot;Please pick an option.\n&quot; +</b>
+&nbsp;                &quot;1. Add Offering.\n&quot; +
+&nbsp;                &quot;2. Remove Offering.\n&quot; +
+&nbsp;                &quot;3. Upload Grades.\n&quot; +
+&nbsp;                &quot;4. See enrolled Students.\n&quot; +
+&nbsp;                &quot;5. Get Student grade in a course.\n&quot; +
+&nbsp;                &quot;6. Update Contact Details.\n&quot; +
+&nbsp;                &quot;7. Get contact details\n&quot;);
+&nbsp;    }
+&nbsp;
+&nbsp;    private void addOffering() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course ID: &quot;);</b>
+<b class="fc">&nbsp;        course = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        semester = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter the number of departments to offer the course to: &quot;);</b>
+<b class="fc">&nbsp;        n = sc.nextInt();</b>
+<b class="fc">&nbsp;        String[] for_dept = new String[n];</b>
+<b class="fc">&nbsp;        boolean[] is_core = new boolean[n];</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter department followed by true if it is a core course for that department otherwise false&quot;);</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; n; i++) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Enter space seperated department code and true/false&quot;);</b>
+<b class="fc">&nbsp;            for_dept[i] = sc.next().trim();</b>
+<b class="fc">&nbsp;            is_core[i] = sc.next().trim().equals(&quot;true&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        System.out.println(&quot;Enter the CGPA criteria for this course, not no criteria enter 0: &quot;);</b>
+<b class="fc">&nbsp;        Double cgpa = sc.nextDouble();</b>
+<b class="fc">&nbsp;        facultyServices.addOffering(course, semester, for_dept, is_core, cgpa);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void removeOffering() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course ID: &quot;);</b>
+<b class="fc">&nbsp;        course = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        semester = sc.next();</b>
+<b class="fc">&nbsp;        facultyServices.removeOffering(course, semester);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void uploadGrades() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course ID: &quot;);</b>
+<b class="fc">&nbsp;        course = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        semester = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter CSV absolute path&quot;);</b>
+<b class="fc">&nbsp;        path = sc.next();</b>
+<b class="fc">&nbsp;        File fd = new File(path);</b>
+<b class="fc">&nbsp;        facultyServices.uploadGrades(course, semester, fd);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void seeEnrolledStudents() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course ID: &quot;);</b>
+<b class="fc">&nbsp;        course = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        semester = sc.next();</b>
+<b class="fc">&nbsp;        facultyServices.getEnrollmentList(course.trim(), semester.trim());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void getStudentGrade() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;StudentID: &quot;);</b>
+<b class="fc">&nbsp;        studentid = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course ID: &quot;);</b>
+<b class="fc">&nbsp;        course = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        semester = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;The grade is: &quot; + facultyServices.getGrade(studentid, course, semester));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void doStuff(String input) {
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        switch (input) {</b>
+&nbsp;            case &quot;1&quot;:
+<b class="fc">&nbsp;                addOffering();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;2&quot;:
+<b class="fc">&nbsp;                removeOffering();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;3&quot;:
+<b class="fc">&nbsp;                uploadGrades();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;4&quot;:
+<b class="fc">&nbsp;                seeEnrolledStudents();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;5&quot;:
+<b class="fc">&nbsp;                getStudentGrade();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;6&quot;:
+<b class="fc">&nbsp;                facultyServices.updateContactDetails(facultyServices.facultyID);</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;7&quot;:
+<b class="fc">&nbsp;                sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;                System.out.println(&quot;Enter UserID to get contact details: &quot;);</b>
+<b class="fc">&nbsp;                studentid = sc.next();</b>
+<b class="fc">&nbsp;                facultyServices.getContactDetails(studentid);</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            default:
+<b class="fc">&nbsp;                System.out.println(&quot;Invalid input, try again...&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-07 03:32</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,186 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > StudentMenu</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.soft</a>
+</div>
+
+<h1>Coverage Summary for Class: StudentMenu (org.soft)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StudentMenu</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.7%
+  </span>
+  <span class="absValue">
+    (38/41)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.soft;
+&nbsp;
+&nbsp;import java.security.PrivilegedAction;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Scanner;
+&nbsp;
+&nbsp;public class StudentMenu implements Menu {
+&nbsp;
+&nbsp;    StudentServices studentServices;
+&nbsp;    String course, semester, option;
+&nbsp;
+<b class="fc">&nbsp;    public StudentMenu(String student, String dept) {</b>
+<b class="fc">&nbsp;        this.studentServices = new StudentServices(student, dept);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public void showOptions() {
+<b class="fc">&nbsp;        System.out.println(&quot;Please pick an option.\n&quot; +</b>
+&nbsp;                &quot;1. Get total registered credits.\n&quot; +
+&nbsp;                &quot;2. Get completed courses.\n&quot; +
+&nbsp;                &quot;3. Credit a course.\n&quot; +
+&nbsp;                &quot;4. Drop a course.\n&quot; +
+&nbsp;                &quot;5. Get CGPA\n&quot; +
+&nbsp;                &quot;6. See Offerings\n&quot; +
+&nbsp;                &quot;7. Update Contact Details\n&quot;);
+&nbsp;    }
+&nbsp;
+&nbsp;    private void getTotalRegisteredCredits() {
+<b class="fc">&nbsp;        Scanner sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        String sem = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(sem);</b>
+<b class="fc">&nbsp;        int temp = studentServices.getRegisteredCredits(sem);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Registered Credits are: &quot; + temp);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void getCompletedCourseList() {
+<b class="fc">&nbsp;        ArrayList&lt;String&gt; courseList = studentServices.getCompletedCourses();</b>
+<b class="fc">&nbsp;        for (String course : courseList) {</b>
+<b class="fc">&nbsp;            System.out.println(course);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void creditACourse() {
+<b class="fc">&nbsp;        Scanner sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course ID: &quot;);</b>
+<b class="fc">&nbsp;        course = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(course);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        semester = sc.next();</b>
+&nbsp;//        studentServices.creditRequest(course, semester);
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    private void dropACourse() {</b>
+<b class="fc">&nbsp;        Scanner sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course ID: &quot;);</b>
+<b class="fc">&nbsp;        course = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        semester = sc.next();</b>
+<b class="fc">&nbsp;        studentServices.dropRequest(course.trim(), semester.trim());</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    private void seeOfferings() {</b>
+<b class="fc">&nbsp;        Scanner sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        semester = sc.next();</b>
+<b class="fc">&nbsp;        studentServices.seeOfferings(semester);</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public void doStuff(String input) {</b>
+<b class="fc">&nbsp;        switch (input) {</b>
+<b class="fc">&nbsp;            case &quot;1&quot; -&gt; getTotalRegisteredCredits();</b>
+<b class="fc">&nbsp;            case &quot;2&quot; -&gt; getCompletedCourseList();</b>
+<b class="fc">&nbsp;            case &quot;3&quot; -&gt; creditACourse();</b>
+<b class="fc">&nbsp;            case &quot;4&quot; -&gt; dropACourse();</b>
+<b class="fc">&nbsp;            case &quot;5&quot; -&gt; System.out.println(&quot;CGPA: &quot; + studentServices.calculateCGPA());</b>
+<b class="fc">&nbsp;            case &quot;6&quot; -&gt; seeOfferings();</b>
+<b class="nc">&nbsp;            case &quot;7&quot; -&gt; studentServices.updateContactDetails(studentServices.studentId);</b>
+<b class="fc">&nbsp;            default -&gt; System.out.println(&quot;Invalid input, try again...&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-07 03:32</div>
+</div>
+</body>
+</html>

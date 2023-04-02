@@ -3,6 +3,7 @@ package org.soft;
 import com.sun.tools.attach.AgentInitializationException;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class AdminMenu implements Menu {
@@ -23,7 +24,8 @@ public class AdminMenu implements Menu {
                 "3. Generate Transcript.\n" +
                 "4. Check if a student can graduate.\n" +
                 "5. Get Student's grade in a course.\n" +
-                "6. Get Contact Details of a user.\n");
+                "6. Get Contact Details of a user.\n" +
+                "7. View Catalog");
     }
 
     private void addCourseToCatalog() {
@@ -83,6 +85,13 @@ public class AdminMenu implements Menu {
         adminServices.getContactDetails(studentid);
     }
 
+    private void viewCatalog() {
+        try {
+            adminServices.viewCatalog();
+        } catch (Exception ignored) {
+        }
+    }
+
     public void doStuff(String input) {
 
 
@@ -104,6 +113,9 @@ public class AdminMenu implements Menu {
                 break;
             case "6":
                 getContactDetails();
+                break;
+            case "7":
+                viewCatalog();
                 break;
             default:
                 System.out.println("Invalid input, try again...");

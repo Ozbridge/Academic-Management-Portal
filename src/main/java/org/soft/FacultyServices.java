@@ -136,7 +136,7 @@ public class FacultyServices extends AcademicServices {
         try {
             ArrayList<String> offeredCourses = getOfferedCourses(semester);
             System.out.println(offeredCourses.get(0));
-            if (offeredCourses == null || !offeredCourses.contains(courseid)) {
+            if (!offeredCourses.contains(courseid)) {
                 System.out.println("Unable to upload grades");
                 return 1;
             }

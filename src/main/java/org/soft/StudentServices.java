@@ -122,7 +122,7 @@ public class StudentServices extends AcademicServices {
         int ans = 0;
         for (int i = 0; i < 2; i++) {
             if (rs.next()) {
-                ans += getEarnedCredits(rs.getString(1));
+                ans += Math.max(6, getEarnedCredits(rs.getString(1)));
             } else {
                 ans += 6;
             }

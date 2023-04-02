@@ -1,0 +1,215 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > AdminMenu</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.soft</a>
+</div>
+
+<h1>Coverage Summary for Class: AdminMenu (org.soft)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminMenu</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (57/57)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.soft;
+&nbsp;
+&nbsp;import com.sun.tools.attach.AgentInitializationException;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.util.Scanner;
+&nbsp;
+&nbsp;public class AdminMenu implements Menu {
+&nbsp;    AdminServices adminServices;
+<b class="fc">&nbsp;    Scanner sc = new Scanner(System.in);</b>
+&nbsp;    String semester, course, path, studentid, title, dept;
+&nbsp;    int n;
+&nbsp;
+<b class="fc">&nbsp;    public AdminMenu() {</b>
+<b class="fc">&nbsp;        this.adminServices = new AdminServices();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public void showOptions() {
+<b class="fc">&nbsp;        System.out.println(&quot;Please pick an option.\n&quot; +</b>
+&nbsp;                &quot;1. Add Course to Catalog.\n&quot; +
+&nbsp;                &quot;2. Remove course in Catalog.\n&quot; +
+&nbsp;                &quot;3. Generate Transcript.\n&quot; +
+&nbsp;                &quot;4. Check if a student can graduate.\n&quot; +
+&nbsp;                &quot;5. Get Student&#39;s grade in a course.\n&quot; +
+&nbsp;                &quot;6. Get Contact Details of a user.\n&quot;);
+&nbsp;    }
+&nbsp;
+&nbsp;    private void addCourseToCatalog() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course ID: &quot;);</b>
+<b class="fc">&nbsp;        course = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course title: &quot;);</b>
+<b class="fc">&nbsp;        sc.nextLine();</b>
+<b class="fc">&nbsp;        title = sc.nextLine();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter offering department code: &quot;);</b>
+<b class="fc">&nbsp;        dept = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter credits: &quot;);</b>
+<b class="fc">&nbsp;        n = sc.nextInt();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Do these count as BTP credits, enter true/false&quot;);</b>
+<b class="fc">&nbsp;        boolean ip = (sc.next().equals(&quot;true&quot;)) ? true : false;</b>
+<b class="fc">&nbsp;        adminServices.addCourse(title, course, dept, n, ip);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void removeCourseInCatalog() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course ID: &quot;);</b>
+<b class="fc">&nbsp;        course = sc.next();</b>
+<b class="fc">&nbsp;        adminServices.removeCourse(course);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void generateTranscript() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;StudentID: &quot;);</b>
+<b class="fc">&nbsp;        studentid = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        semester = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(adminServices.generateTranscript(studentid, semester));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void checkIfStudentCanGraduate() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter Student ID: &quot;);</b>
+<b class="fc">&nbsp;        studentid = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(adminServices.canGraduate(studentid));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void getStudentGradeInCourse() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;StudentID: &quot;);</b>
+<b class="fc">&nbsp;        studentid = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter course ID: &quot;);</b>
+<b class="fc">&nbsp;        course = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter semester: &quot;);</b>
+<b class="fc">&nbsp;        semester = sc.next();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;The grade is: &quot; + adminServices.getGrade(studentid, course, semester));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void getContactDetails() {
+<b class="fc">&nbsp;        sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter UserID to get contact details: &quot;);</b>
+<b class="fc">&nbsp;        studentid = sc.next();</b>
+<b class="fc">&nbsp;        adminServices.getContactDetails(studentid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void doStuff(String input) {
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        switch (input) {</b>
+&nbsp;            case &quot;1&quot;:
+<b class="fc">&nbsp;                addCourseToCatalog();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;2&quot;:
+<b class="fc">&nbsp;                removeCourseInCatalog();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;3&quot;:
+<b class="fc">&nbsp;                generateTranscript();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;4&quot;:
+<b class="fc">&nbsp;                checkIfStudentCanGraduate();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;5&quot;:
+<b class="fc">&nbsp;                getStudentGradeInCourse();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case &quot;6&quot;:
+<b class="fc">&nbsp;                getContactDetails();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            default:
+<b class="fc">&nbsp;                System.out.println(&quot;Invalid input, try again...&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-07 03:32</div>
+</div>
+</body>
+</html>

@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -167,5 +168,16 @@ public class AdminServices extends AcademicServices {
             System.out.println(e.getMessage());
         }
         return 1;
+    }
+
+    int viewCatalog() throws SQLException {
+        String query = "select id from courses where active = true";
+        Connection con = DatabaseService.getConnection();
+        PreparedStatement ps = con.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            System.out.println("CourseID: " + rs.getString(1));
+        }
+        return 0;
     }
 }

@@ -43,12 +43,12 @@ CREATE TABLE prerequisites
 
 CREATE TABLE semesters
 (
-    id         VARCHAR(10),
-    str        DATE,
-    ends       DATE,
-    add_drop   DATE,
-    withdraw   DATE,
-    cred_limit INTEGER NOT NULL,
+    id       VARCHAR(10),
+    str      DATE,
+    ends     DATE,
+    add_drop DATE,
+    withdraw DATE,
+--     cred_limit INTEGER NOT NULL,
     PRIMARY KEY (id)
 );
 

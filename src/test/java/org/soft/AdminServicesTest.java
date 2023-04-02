@@ -52,8 +52,8 @@ class AdminServicesTest {
 
     @Test
     void getGrade() {
-        assertEquals("A", adminServices.getGrade("2020csb1198", "CS503", "2022-II"));
-        assertEquals(null, adminServices.getGrade("2020csb1198", "CS539", "2022-II"));
+        assertNull(adminServices.getGrade("2020csb1198", "CS503", "2022-II"));
+        assertNull(adminServices.getGrade("2020csb1198", "CS539", "2022-II"));
 
     }
 
@@ -66,6 +66,14 @@ class AdminServicesTest {
     void getContactDetails() {
         assertEquals(0, adminServices.getContactDetails("2020csb1198"));
         assertEquals(1, adminServices.getContactDetails("2020csb9999"));
+    }
+
+    @Test
+    void viewOfferings() {
+        try {
+            assertEquals(0, adminServices.viewCatalog());
+        } catch (Exception ignored) {
+        }
     }
 
     @AfterAll

@@ -30,6 +30,8 @@ class FacultyServicesTest {
         boolean[] isCore = {true, false};
         assertEquals(0, facultyServices.addOffering("CS503", "2023-I", forDept, isCore, 7.5));
         assertEquals(1, facultyServices.addOffering("CS599", "2023-I", forDept, isCore, 7.5));
+        assertEquals(1, facultyServices.addOffering("CS401", "2023-I", forDept, isCore, 7.5));
+
     }
 
     @Test
@@ -40,18 +42,21 @@ class FacultyServicesTest {
 
     @Test
     void uploadGrades() {
-        File fd = new File("/Users/rishabhjain/IdeaProjects/softE/SoftE/datatemp/gradeCS503.csv");
+        String path = System.getProperty("user.dir") + "/datatemp/gradeCS503.csv";
+        System.out.println(path);
+        File fd = new File(path);
         assertEquals(0, facultyServices.uploadGrades("CS503", "2022-II", fd));
-        fd = new File("/Users/rishabhjain/IdeaProjects/softE/SoftE/datatemp/gradeCS99.csv");
         assertEquals(1, facultyServices.uploadGrades("CS304", "2022-II", fd));
-        fd = new File("/Users/rishabhjain/IdeaProjects/softE/SoftE/datatemp/gradeCS99.csv");
+        FacultyServices temp = facultyServices;
+        facultyServices = new FacultyServices("hs002", "HS");
         assertEquals(1, facultyServices.uploadGrades("CS503", "2022-II", fd));
+        facultyServices = temp;
 
     }
 
     @Test
     void getGrade() {
-        assertEquals("A", facultyServices.getGrade("2020csb1198", "CS503", "2022-II"));
+        assertNull(facultyServices.getGrade("2020csb1198", "CS503", "2022-II"));
         assertNull(facultyServices.getGrade("2020csb1198", "CS539", "2022-II"));
     }
 

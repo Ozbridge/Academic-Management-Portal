@@ -1,0 +1,370 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > StudentServices</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.soft</a>
+</div>
+
+<h1>Coverage Summary for Class: StudentServices (org.soft)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StudentServices</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    86.2%
+  </span>
+  <span class="absValue">
+    (144/167)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.soft;
+&nbsp;
+&nbsp;import java.sql.*;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Date;
+&nbsp;
+&nbsp;public class StudentServices extends AcademicServices {
+&nbsp;    String studentId;
+&nbsp;    String dept;
+&nbsp;
+<b class="fc">&nbsp;    public StudentServices(String studentId, String dept) {</b>
+<b class="fc">&nbsp;        this.studentId = studentId;</b>
+<b class="fc">&nbsp;        this.dept = dept;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    int getRegisteredCredits(String semester) {
+<b class="fc">&nbsp;        int ans = 0;</b>
+<b class="fc">&nbsp;        String query = &quot;SELECT SUM(credits) &quot; +</b>
+&nbsp;                &quot;FROM enrollments, courses &quot; +
+&nbsp;                &quot;WHERE courses.id = enrollments.course_id &quot; +
+&nbsp;                &quot;and student_id = ? and semester = ? and status = &#39;Enrolled&#39;&quot;;
+&nbsp;        try {
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, studentId);</b>
+<b class="fc">&nbsp;            ps.setString(2, semester);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            rs.next();</b>
+<b class="fc">&nbsp;            ans = rs.getInt(1);</b>
+<b class="fc">&nbsp;            return ans;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    int getEarnedCredits(String semester) {
+<b class="fc">&nbsp;        int ans = 0;</b>
+<b class="fc">&nbsp;        String query = &quot;SELECT SUM(credits) &quot; +</b>
+&nbsp;                &quot;FROM enrollments, courses &quot; +
+&nbsp;                &quot;WHERE courses.id = enrollments.course_id  AND EXISTS (select * from grades where enrollments.grade = grades.grade and weight != 0)&quot; +
+&nbsp;                &quot;and student_id = ? and semester = ?&quot;;
+&nbsp;        try {
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, studentId);</b>
+<b class="fc">&nbsp;            ps.setString(2, semester);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            rs.next();</b>
+<b class="fc">&nbsp;            ans = rs.getInt(1);</b>
+<b class="fc">&nbsp;            return ans;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private int getWeightedEarnedCredits(String semester) {
+<b class="fc">&nbsp;        int ans = 0;</b>
+<b class="fc">&nbsp;        String query = &quot;SELECT SUM(credits*(select weight from grades where enrollments.grade = grades.grade)) &quot; +</b>
+&nbsp;                &quot;FROM enrollments, courses &quot; +
+&nbsp;                &quot;WHERE courses.id = enrollments.course_id &quot; +
+&nbsp;                &quot;and student_id = ? and semester = ?&quot;;
+&nbsp;        try {
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, studentId);</b>
+<b class="fc">&nbsp;            ps.setString(2, semester);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            rs.next();</b>
+<b class="fc">&nbsp;            ans = rs.getInt(1);</b>
+<b class="fc">&nbsp;            return ans;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    ArrayList&lt;String&gt; getCompletedCourses() {
+<b class="fc">&nbsp;        ArrayList&lt;String&gt; ans = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            String query = &quot;SELECT course_id from enrollments where student_id = ? and grade is not null and grade &lt;&gt; &#39;F&#39;&quot;;</b>
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, studentId);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                ans.add(rs.getString(1));</b>
+&nbsp;            }
+<b class="fc">&nbsp;            con.close();</b>
+<b class="fc">&nbsp;            return ans;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ans;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private boolean hasCompletedPrerequisites(String courseid) {
+<b class="fc">&nbsp;        ArrayList&lt;String&gt; completedCourses = getCompletedCourses();</b>
+&nbsp;
+&nbsp;        for (String course :
+<b class="fc">&nbsp;                getPrerequisites(courseid)) {</b>
+<b class="fc">&nbsp;            if (!completedCourses.contains(course)) {</b>
+<b class="fc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private int getCreditLimits(String semester) {
+<b class="fc">&nbsp;        String query = &quot;select id from semesters where id &lt; ? order by id desc limit 2&quot;;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, semester);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            int ans = 0;</b>
+<b class="fc">&nbsp;            for (int i = 0; i &lt; 2; i++) {</b>
+<b class="fc">&nbsp;                if (rs.next()) {</b>
+<b class="fc">&nbsp;                    ans += getEarnedCredits(rs.getString(1));</b>
+&nbsp;                } else {
+<b class="fc">&nbsp;                    ans += 6;</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            ans = (int) Math.ceil(ans * 1.25 / 2);</b>
+&nbsp;//            System.out.println(ans);
+<b class="fc">&nbsp;            return ans;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private double getCGPARequirement(String course, String semester) {
+<b class="fc">&nbsp;        String query = &quot;Select cgpa from offerings where course_id = ? and semester = ?&quot;;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, course);</b>
+<b class="fc">&nbsp;            ps.setString(2, semester);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            double ans = 0;</b>
+<b class="fc">&nbsp;            if (rs.next()) {</b>
+<b class="fc">&nbsp;                ans = rs.getDouble(1);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            con.close();</b>
+<b class="fc">&nbsp;            return ans;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    int creditRequest(String courseid, String semester) {
+<b class="fc">&nbsp;        Date deadline = getAddDropDate(semester);</b>
+<b class="fc">&nbsp;        if (deadline == null</b>
+<b class="fc">&nbsp;                || deadline.compareTo(new Date()) &lt; 0</b>
+<b class="fc">&nbsp;                || getCredits(courseid) + getRegisteredCredits(semester) &gt; getCreditLimits(semester)</b>
+<b class="fc">&nbsp;                || !hasCompletedPrerequisites(courseid)</b>
+<b class="fc">&nbsp;                || calculateCGPA() &lt; getCGPARequirement(courseid, semester)</b>
+&nbsp;        ) {
+<b class="fc">&nbsp;            System.out.println(&quot;Unable to credit...&quot;);</b>
+<b class="fc">&nbsp;            return 1;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        String query = &quot;SELECT course_id, is_core, isBTP FROM offerings, courses WHERE courses.id = course_id and course_id = ? and semester = ? and for_dept = ? and status = &#39;Offering&#39;&quot;;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, courseid);</b>
+<b class="fc">&nbsp;            ps.setString(2, semester);</b>
+<b class="fc">&nbsp;            ps.setString(3, dept);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            if (!rs.isBeforeFirst()) {</b>
+<b class="fc">&nbsp;                System.out.println(&quot;Course not offered...&quot;);</b>
+<b class="fc">&nbsp;                con.close();</b>
+<b class="fc">&nbsp;                return 1;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            rs.next();</b>
+<b class="fc">&nbsp;            String creditedas = &quot;E&quot;;</b>
+<b class="fc">&nbsp;            if (rs.getBoolean(2)) {</b>
+<b class="fc">&nbsp;                creditedas = &quot;C&quot;;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (rs.getBoolean(3)) {</b>
+<b class="fc">&nbsp;                creditedas = &quot;B&quot;;</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            query = &quot;INSERT INTO enrollments values (?,?,?,?,?,?)&quot;;</b>
+<b class="fc">&nbsp;            ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, courseid);</b>
+<b class="fc">&nbsp;            ps.setString(2, studentId);</b>
+<b class="fc">&nbsp;            ps.setString(3, &quot;Enrolled&quot;);</b>
+&nbsp;            //noinspection JpaQueryApiInspection
+<b class="fc">&nbsp;            ps.setString(4, semester);</b>
+&nbsp;            //noinspection JpaQueryApiInspection
+<b class="fc">&nbsp;            ps.setString(5, null);</b>
+&nbsp;            //noinspection JpaQueryApiInspection
+<b class="fc">&nbsp;            ps.setString(6, creditedas);</b>
+<b class="fc">&nbsp;            ps.execute();</b>
+<b class="fc">&nbsp;            con.close();</b>
+<b class="fc">&nbsp;            return 0;</b>
+<b class="fc">&nbsp;        } catch (Exception e) {</b>
+<b class="fc">&nbsp;            System.out.println(e.getMessage());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return 1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    int dropRequest(String courseid, String semester) {
+<b class="fc">&nbsp;        String query = &quot;SELECT course_id, status, grade FROM enrollments WHERE course_id = ? and student_id = ? and semester = ?&quot;;</b>
+<b class="fc">&nbsp;        Date deadline = getAddDropDate(semester);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (deadline == null || deadline.compareTo(new Date()) &lt; 0) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Unable to process request...&quot;);</b>
+<b class="fc">&nbsp;            return 1;</b>
+&nbsp;        }
+&nbsp;        try {
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, courseid);</b>
+<b class="fc">&nbsp;            ps.setString(2, studentId);</b>
+<b class="fc">&nbsp;            ps.setString(3, semester);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            if (!rs.isBeforeFirst()) {</b>
+<b class="fc">&nbsp;                con.close();</b>
+<b class="fc">&nbsp;                System.out.println(&quot;Course not credited...&quot;);</b>
+<b class="fc">&nbsp;                return 1;</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            query = &quot;UPDATE enrollments SET status = &#39;Dropped&#39; WHERE course_id = ? and student_id = ? and semester = ?&quot;;</b>
+<b class="fc">&nbsp;            ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, courseid);</b>
+<b class="fc">&nbsp;            ps.setString(2, studentId);</b>
+<b class="fc">&nbsp;            ps.setString(3, semester);</b>
+<b class="fc">&nbsp;            ps.execute();</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;//    double calculateSGPA(String semester) {
+&nbsp;//        int creds = 0, earnedCreds = 0;
+&nbsp;//        creds += getEarnedCredits(semester);
+&nbsp;//        earnedCreds += getWeightedEarnedCredits(semester);
+&nbsp;//        return earnedCreds / (creds * 1.0);
+&nbsp;//    }
+&nbsp;
+&nbsp;
+&nbsp;    double calculateCGPA() {
+<b class="fc">&nbsp;        int creds = 0, earnedCreds = 0;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            String query = &quot;select semester from enrollments where student_id = ? group by semester&quot;;</b>
+<b class="fc">&nbsp;            Connection con = DatabaseService.getConnection();</b>
+<b class="fc">&nbsp;            PreparedStatement ps = con.prepareStatement(query);</b>
+<b class="fc">&nbsp;            ps.setString(1, studentId);</b>
+<b class="fc">&nbsp;            ResultSet rs = ps.executeQuery();</b>
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                creds += getEarnedCredits(rs.getString(1));</b>
+<b class="fc">&nbsp;                earnedCreds += getWeightedEarnedCredits(rs.getString(1));</b>
+&nbsp;            }
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return earnedCreds / (creds * 1.0);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-07 03:32</div>
+</div>
+</body>
+</html>

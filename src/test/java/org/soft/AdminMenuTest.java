@@ -61,6 +61,9 @@ class AdminMenuTest {
         adminMenu.doStuff("6");
 
         adminMenu.doStuff("7");
+        
+        adminMenu.doStuff("8");
+
         System.setIn(sysInBackup);
     }
 
